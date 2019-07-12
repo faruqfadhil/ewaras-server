@@ -18,8 +18,8 @@ const createRefreshResponse = function (refresh) {
 const emitEvent = function (eventName, body) {
     publicSocket.emit(eventName, body);
 };
-const notifyEwarasData = function(id,data){
-    emitEvent('/topic/ewaras/'+id,data)
+const notifyEwarasData = function(idDokter,data){
+    emitEvent('/topic/ewaras/'+idDokter,data)
 }
 const notifyDetailEwaras = function(id,data){
     emitEvent('/topic/ewaras/detail/'+id,data)

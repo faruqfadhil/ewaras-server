@@ -14,8 +14,17 @@ const perangkatRepositories = {
     emitStreamData : async(id)=>{
         let latestUpdate = await Perangkat.findById(id)
         if(latestUpdate){
-            socketApp.notifyEwarasData(id,latestUpdate)
-            return latestUpdate
+            // emit to specific id perangkat
+            socketApp.notifyDetailEwaras(id,latestUpdate)
+            let perangkatEachDokter = await Perangkat.find({
+                idDokter: latestUpdate.idDokter
+            })
+            if(perangkatEachDokter){
+                // emit to all perangkat in dokter
+                socketApp.notifyEwarasData(latestUpdate.idDokter,perangkatEachDokter)
+                return latestUpdate
+            }
+            
         }else{
             return false
         }

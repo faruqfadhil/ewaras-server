@@ -6,13 +6,13 @@
 
 version: '2'
 services:
-  # authentication-service:
-  #   container_name: auth-container
-  #   build: ./auth/
-  #   ports:
-  #     - 3000:3000
-  #   links:
-  #     - mongo
+  authentication-service:
+    container_name: auth-container
+    build: ./auth/
+    ports:
+      - 3000:3000
+    links:
+      - mongo
 
   sensor-server-service:
     container_name: sensor-server-container

@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var PeternakSchema = new Schema({
+var DokterSchema = new Schema({
   idUser: {
     type: Schema.Types.ObjectId,
   },
@@ -16,7 +16,12 @@ var PeternakSchema = new Schema({
   noTelp: {
     type: Number,
     required: true
-  }
+  },
+  pasienEnrol:[{
+    idPasien:{
+      type: Schema.Types.ObjectId
+    }
+  }]
 });
 
-module.exports = mongoose.model('Peternak', PeternakSchema);
+module.exports = mongoose.model('Dokter', DokterSchema);

@@ -70,53 +70,5 @@ const method ={
         }else{
             console.log("update gagal")
         }
-    },
-  //   saveToDb: async(suhu,detak,spo)=>{
-  //     var event = new Date();
-  //     var today = event.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-  //     var newPerangkat = new Perangkat({
-  //       idDokter: new ObjectId("5ccc42bbda50b10a12fb3082"),
-  //       namaPasien: "Faruq",
-  //       alamatPasien : "Bangkalan",
-  //       noTelp : "085859953545",
-  //       statusDevice : 1,
-  //       data: [{
-  //         tanggal:today,
-  //         suhu:suhu,
-  //         jantung:detak,
-  //         spo: spo,
-  //         kondisi: 1
-  //       }]
-  //     });
-  //     let result = await newPerangkat.save() 
-  //     if(result){
-  //         console.log("update berhasil")
-  //     }else{
-  //         console.log("update gagal")
-  //     }
-  // },
-    nganu: function(){
-      var event = new Date();
-      var today = event.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-      Perangkat.update({
-          _id: "5ccc42bbda50b10a12fb3082"
-        }, {
-          $set: {
-            'status': 1
-          },
-          $push: {
-            'data': {
-              tanggal: today,
-              suhu: 23,
-              jantung: 66
-            }
-          }
-        },
-        function (err, docs) {
-          if (err)
-            console.log(err)
-          console.log("saved")
-        }
-      )
     }
 }
