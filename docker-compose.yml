@@ -14,13 +14,14 @@ services:
   #   links:
   #     - mongo
 
-  # sensor-server-service:
-  #   container_name: sensor-server-container
-  #   build: ./sensor_server/
-  #   ports:
-  #     - 3001:3000
-  #   links:
-  #     - mongo
+  sensor-server-service:
+    container_name: sensor-server-container
+    build: ./sensor_server/
+    ports:
+      - 3002:3000
+    links:
+      - mongo
+
   node-server-service:
     container_name: node-server-container
     build: ./node_server/

@@ -63,6 +63,7 @@ import io from 'socket.io-client'
 import Constants from "@/services/Constants"
 import 'vue-spinners/dist/vue-spinners.css'
 import { BounceSpinner } from 'vue-spinners/dist/vue-spinners.common'
+
 export default {
   name: 'Login',
   components: {
@@ -72,6 +73,7 @@ export default {
   data: function(){
     return{
        isLoading:false,
+       socket : io(Constants.SOCKET_SERVER),
        isProcess:true,
        username:"",
        password:"",
@@ -102,11 +104,18 @@ export default {
     toRegis(){
       this.$router.push({ name: 'Register' })
     },
+    soket(){
+      this.socket.on('/topic/ewaras/5d260eb6431e34b08b3bc275', (perangkatData) => {
+        console.log(perangkatData)
+            
+      });
+    },
     checkForm:function(e){
       if(this.username && this.password ){
         this.isLoading=true
         this.isProcess=false
-        this.postData();
+        // this.postData();
+        this.soket()
       }
       this.errors = []
       if(!this.username){

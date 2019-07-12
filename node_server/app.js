@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var config = require('./config/database');
 var Perangkat = require("./model/perangkat.model");
 var ObjectId = require('mongoose').Types.ObjectId;
+var api = require("./services/Outapi");
 
 // comment this when no mongo DB installed on your server
 mongoose.connect(config.database)
@@ -61,7 +62,11 @@ const method ={
           }
         );
         if(result){
-            console.log("update berhasil")
+          let toServer = await api.uploadTo(id)
+          if(toServer){
+            console.log(toServer.data)
+          }
+            
         }else{
             console.log("update gagal")
         }

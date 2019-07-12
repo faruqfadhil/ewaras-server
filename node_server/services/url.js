@@ -2,10 +2,10 @@
  * Author : Faruq
  * List API baseUrl
  */
-const cobaUrl = function(){
-    return 'http://40.121.6.197:3001/api/coba/'
+const perangkatUrl = function(){
+    return 'http://192.168.20.100:3002/api/perangkat/'
 }
 
 module.exports = {
-    cobaUrl
+    perangkatUrl
 }

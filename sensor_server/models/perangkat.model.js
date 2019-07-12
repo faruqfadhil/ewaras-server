@@ -2,15 +2,21 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var PerangkatSchema = new Schema({
-  idSapi: {
-    type: Schema.Types.ObjectId,
+  idDokter :{
+    type: Schema.Types.ObjectId
   },
-  status: Number,
+  namaPasien: String,
+  alamatPasien : String,
+  noTelp : String,
+  statusDevice : Number,
   data: [{
     tanggal:{ type: Date, default: Date.now },
     suhu:Number,
-    jantung:Number
+    jantung:Number,
+    spo: Number,
+    kondisi: Number
   }]
+
 });
 
 module.exports = mongoose.model('Perangkat', PerangkatSchema);
