@@ -7,6 +7,7 @@ const user_controller = require('../controllers/user.controller');
 var VerifyToken = require('../config/VerifyToken');
 
 router.post('/dokter/signup', user_controller.dokter_signup);
+router.post('/dokter/pasien-enrol', user_controller.pasien_enrol);
 router.post('/pasien/signup', user_controller.pasien_signup);
 // router.post('/usersignup', user_controller.user_signup);
 // router.post('/signin', user_controller.signin);

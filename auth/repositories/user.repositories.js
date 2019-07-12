@@ -7,6 +7,7 @@ var User = require("../models/user");
 var Dokter = require("../models/dokter.model");
 var Pasien = require("../models/pasien.model");
 var bcrypt = require('bcrypt-nodejs');
+var ObjectId = require('mongoose').Types.ObjectId;
 
 const userRepositories = {
     dokterSignup: async(username,password,nama,alamat,telp,role)=>{
@@ -48,7 +49,24 @@ const userRepositories = {
                 return savePasien
             }
         }
-    }
+    },
+    pasienEnrol : async(idDokter,idPasien)=>{
+        let result = await Dokter.update({
+            _id: new ObjectId(idDokter)
+          }, {
+            $push: {
+              'pasienEnrol': {
+                idPasien: new ObjectId(idPasien)
+              }
+            }
+          }
+        )
+        if(result){
+            return result
+        }else{
+            return false
+        }
+    },
     // userSignup: async(username,password,role)=>{
     //     let newUser = new User({
     //         username: username,
