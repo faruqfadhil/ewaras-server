@@ -14,9 +14,9 @@ services:
     links:
       - mongo
 
-  sensor-server-service:
-    container_name: sensor-server-container
-    build: ./sensor_server/
+  sensor-api-server-service:
+    container_name: sensor-api-server-container
+    build: ./sensor_api_server/
     ports:
       - 3002:3000
     links:

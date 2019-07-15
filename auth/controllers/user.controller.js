@@ -16,7 +16,7 @@ module.exports = {
       response.setMessage('Please pass the require form')
     }else{
       try{
-        response.setData(await userRepositories.dokterSignup(req.body.username,req.body.password,req.body.nama,req.body.alamat,req.body.telp, req.body.role))
+        response.setData(await userRepositories.dokterSignup(req.body.username,req.body.password,req.body.nama,req.body.alamat,req.body.telp, req.body.role,req.body.sip))
       }catch (e) {
         response.setStatus(false)
         response.setMessage(e)
@@ -31,7 +31,7 @@ module.exports = {
       response.setMessage('Please pass the require form')
     }else{
       try{
-        response.setData(await userRepositories.pasienSignup(req.body.username,req.body.password,req.body.nama,req.body.alamat,req.body.telp, req.body.role))
+        response.setData(await userRepositories.pasienSignup(req.body.username,req.body.password,req.body.nama,req.body.alamat,req.body.telp, req.body.role,req.body.nik))
       }catch (e) {
         response.setStatus(false)
         response.setMessage(e)
@@ -41,14 +41,30 @@ module.exports = {
   },
   pasien_enrol: async(req,res)=>{
     let response = new Response()
-    try{
-      response.setData(await userRepositories.pasienEnrol(req.body.idDokter,req.body.idPasien))
-    }catch(e){
-      response.setStatus(false)
-      response.setMessage(e)
+    let token = Token.authorizationToken(req.headers)
+    if(token){
+      try{
+        response.setData(await userRepositories.pasienEnrol(req.body.idDokter,req.body.idPasien))
+      }catch(e){
+        response.setStatus(false)
+        response.setMessage(e)
+      }
+      res.json(response)
+    }else{
+      res.json(response.unAuthorized())
     }
-    res.json(response)
-  }
+  },
+  dokter_enrolling: async(req,res)=>{
+    let response = new Response()
+      try{
+        response.setData(await userRepositories.dokterEnrolling(req.body.idPasien))
+      }catch(e){
+        response.setStatus(false)
+        response.setMessage(e)
+      }
+      res.json(response)
+    
+  },
   // user_signup: async(req,res)=>{
   //   let response = new Response()
   //   try{
@@ -65,22 +81,22 @@ module.exports = {
   //   }
   //   res.json(response)
   // },
-  // signin: async(req,res)=>{
-  //   let response = new Response()
-  //   try{
-  //     let result = await userRepositories.signin(req.body.username,req.body.password)
-  //     if(result){
-  //       response.setData(result)
-  //     }else{
-  //       response.setStatus(false)
-  //       response.setMessage("Invalid username or password")
-  //     }
-  //   }catch (e){
-  //     response.setStatus(false)
-  //     response.setMessage(e)
-  //   }
-  //   res.json(response)
-  // },
+  signin: async(req,res)=>{
+    let response = new Response()
+    try{
+      let result = await userRepositories.signin(req.body.username,req.body.password)
+      if(result){
+        response.setData(result)
+      }else{
+        response.setStatus(false)
+        response.setMessage("Invalid username or password")
+      }
+    }catch (e){
+      response.setStatus(false)
+      response.setMessage(e)
+    }
+    res.json(response)
+  },
   // user_delete:async(req,res)=>{
   //   let response = new Response()
   //   let token = Token.authorizationToken(req.headers)
@@ -111,22 +127,22 @@ module.exports = {
   //     res.json(response.unAuthorized())
   //   }
   // },
-  // me: async(req,res)=>{
-  //   let response = new Response()
-  //   let token = Token.authorizationToken(req.headers)
-  //   if(token){
-  //     let result_decode = jwt.verify(token, config.secret)
-  //     try{
-  //       response.setData(await userRepositories.profile(result_decode._doc._id))
-  //     }catch(e){
-  //       response.setStatus(false)
-  //       response.setMessage(e)
-  //     }
-  //     res.json(response)
-  //   }else{
-  //     res.json(response.unAuthorized())
-  //   }
-  // },
+  pasien_profile: async(req,res)=>{
+    let response = new Response()
+    let token = Token.authorizationToken(req.headers)
+    if(token){
+      let result_decode = jwt.verify(token, config.secret)
+      try{
+        response.setData(await userRepositories.profile(result_decode._doc._id))
+      }catch(e){
+        response.setStatus(false)
+        response.setMessage(e)
+      }
+      res.json(response)
+    }else{
+      res.json(response.unAuthorized())
+    }
+  }
   // all_peternak: async(req,res)=>{
   //   let response = new Response()
   //   let token = Token.authorizationToken(req.headers)

@@ -2,12 +2,14 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var PerangkatSchema = new Schema({
-  idDokter :{
+  idPasien :{
     type: Schema.Types.ObjectId
   },
-  namaPasien: String,
-  alamatPasien : String,
-  noTelp : String,
+  dokterEnrolling:[{
+    idDokter: {
+      type: Schema.Types.ObjectId
+    }
+  }],
   statusDevice : Number,
   data: [{
     tanggal:{ type: Date, default: Date.now },

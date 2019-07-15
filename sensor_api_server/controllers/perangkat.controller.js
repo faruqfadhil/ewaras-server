@@ -17,5 +17,25 @@ module.exports = {
       response.setMessage(e)
     }
     res.json(response) 
+  },
+  perangkat_register: async(req, res)=>{
+    let response = new Response()
+    try{
+      response.setData(await perangkatRepositories.perangkatRegister(req.body.idPasien))
+    }catch(e){
+      response.setStatus(false)
+      response.setMessage(e)
+    }
+    res.json(response) 
+  },
+  dokter_enrolling: async(req, res)=>{
+    let response = new Response()
+    try{
+      response.setData(await perangkatRepositories.dokterEnrolling(req.body.idDokter,req.body.idPasien))
+    }catch(e){
+      response.setStatus(false)
+      response.setMessage(e)
+    }
+    res.json(response) 
   }
 }

@@ -28,4 +28,4 @@
 
 /node_server/node_modules/
 /auth/node_modules/
-/sensor_server/node_modules/
+/sensor_api_server/node_modules/

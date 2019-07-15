@@ -7,10 +7,11 @@ var User = require("../models/user");
 var Dokter = require("../models/dokter.model");
 var Pasien = require("../models/pasien.model");
 var bcrypt = require('bcrypt-nodejs');
+var api = require("../services/Outapi");
 var ObjectId = require('mongoose').Types.ObjectId;
 
 const userRepositories = {
-    dokterSignup: async(username,password,nama,alamat,telp,role)=>{
+    dokterSignup: async(username,password,nama,alamat,telp,role,sip)=>{
         let newUser = new User({
             username: username,
             password: password,
@@ -20,6 +21,7 @@ const userRepositories = {
         if(saveUser){
             let newDokter = new Dokter({
                 idUser: saveUser._id,
+                sip:sip,
                 nama: nama,
                 alamat: alamat,
                 noTelp: telp
@@ -30,7 +32,7 @@ const userRepositories = {
             }
         }
     },
-    pasienSignup: async(username,password,nama,alamat,telp,role)=>{
+    pasienSignup: async(username,password,nama,alamat,telp,role,nik)=>{
         let newUser = new User({
             username: username,
             password: password,
@@ -40,14 +42,25 @@ const userRepositories = {
         if(saveUser){
             let newPasien = new Pasien({
                 idUser: saveUser._id,
+                nik:nik,
                 nama: nama,
                 alamat: alamat,
                 noTelp: telp
             })
             let savePasien = await newPasien.save()
             if(savePasien){
-                return savePasien
+                let newPerangkat = await api.perangkatRegister(savePasien._id)
+                if(newPerangkat.data){
+                    return savePasien
+                }else{
+                    return false
+                }
+                
+            }else{
+                return false
             }
+        }else{
+            return false
         }
     },
     pasienEnrol : async(idDokter,idPasien)=>{
@@ -62,7 +75,13 @@ const userRepositories = {
           }
         )
         if(result){
-            return result
+            let toPerangkat = await api.dokterEnrolling(idPasien,idDokter)
+            if(toPerangkat.data){
+                return result
+            }else{
+                return false
+            }
+            
         }else{
             return false
         }
@@ -78,28 +97,28 @@ const userRepositories = {
     //         return saveUser
     //     }
     // },
-    // signin: async(username,password)=>{
-    //     let user = await User.findOne({
-    //         username: username
-    //     })
-    //     if(user){
-    //         if(bcrypt.compareSync(password, user.password)){
-    //             let token = jwt.sign(user,config.secret)
-    //             let newUserObj = {
-    //                 _id: user._id,
-    //                 username: user.username,
-    //                 password: user.password,
-    //                 role: user.role,
-    //                 token: 'JWT ' + token
-    //             }
-    //             return newUserObj
-    //         }else{
-    //             return false
-    //         }
-    //     }else{
-    //         return false
-    //     }
-    // },
+    signin: async(username,password)=>{
+        let user = await User.findOne({
+            username: username
+        })
+        if(user){
+            if(bcrypt.compareSync(password, user.password)){
+                let token = jwt.sign(user,config.secret)
+                let newUserObj = {
+                    _id: user._id,
+                    username: user.username,
+                    password: user.password,
+                    role: user.role,
+                    token: 'JWT ' + token
+                }
+                return newUserObj
+            }else{
+                return false
+            }
+        }else{
+            return false
+        }
+    },
     // userDelete: async(id)=>{
     //     let result = await User.findByIdAndRemove(id)
     //     return result
@@ -110,47 +129,29 @@ const userRepositories = {
     //     })
     //     return result
     // },
-    // profile:async(idUser)=>{
-    //     let result = await Peternak.findOne({
-    //         idUser:idUser
-    //     })
-    //     return result
-    // },
-    // getAllPeternak: async()=>{
-    //     let result = await User.aggregate(
-    //         // Pipeline
-    //         [
-    //             // Stage 1
-    //             {
-    //                 $match: {
-    //                     "role" : 2
-                    
-    //                 }
-    //             },
-
-    //             // Stage 2
-    //             {
-    //                 $lookup: // Equality Match
-    //                 {
-    //                     from: "peternaks",
-    //                     localField: "_id",
-    //                     foreignField: "idUser",
-    //                     as: "peternak_docs"
-    //                 }
-                    
-    //                 // Uncorrelated Subqueries
-    //                 // (supported as of MongoDB 3.6)
-    //                 // {
-    //                 //    from: "<collection to join>",
-    //                 //    let: { <var_1>: <expression>, …, <var_n>: <expression> },
-    //                 //    pipeline: [ <pipeline to execute on the collection to join> ],
-    //                 //    as: "<output array field>"
-    //                 // }
-    //             },
-
-    //         ]
-    //     )
-    //     return result
-    // }
+    profile:async(idUser)=>{
+        let result = await Pasien.findOne({
+            idUser:idUser
+        })
+        return result
+    },
+    dokterEnrolling: async(idPasien)=>{
+        let result = await Dokter.aggregate(
+            [
+                {
+                  '$unwind': {
+                    'path': '$pasienEnrol', 
+                    'includeArrayIndex': 'arrayIndex', 
+                    'preserveNullAndEmptyArrays': false
+                  }
+                }, {
+                  '$match': {
+                    'pasienEnrol.idPasien': new ObjectId(idPasien)
+                  }
+                }
+              ]
+        )
+        return result
+    }
 }
 module.exports = userRepositories

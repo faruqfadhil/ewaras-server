@@ -5,6 +5,10 @@ var PasienSchema = new Schema({
   idUser: {
     type: Schema.Types.ObjectId,
   },
+  nik: {
+    type: String,
+    required: true
+  },
   nama: {
     type: String,
     required: true

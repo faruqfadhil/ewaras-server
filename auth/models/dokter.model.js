@@ -5,6 +5,10 @@ var DokterSchema = new Schema({
   idUser: {
     type: Schema.Types.ObjectId,
   },
+  sip: {
+    type: String,
+    required: true
+  },
   nama: {
     type: String,
     required: true
