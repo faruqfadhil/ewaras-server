@@ -13,6 +13,13 @@ const OutApi = {
             idDokter: idDokter
           })
         return result
-    }
+    },
+    dokterUnroll: async(idDokter,idPasien)=>{
+      let result = await axios.post(Api.perangkatUrl()+'dokter-unroll', {
+          idDokter: idDokter,
+          idPasien: idPasien
+        })
+      return result
+  }
 }
 module.exports = OutApi

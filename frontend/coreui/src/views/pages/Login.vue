@@ -105,7 +105,7 @@ export default {
       this.$router.push({ name: 'Register' })
     },
     soket(){
-      this.socket.on('/topic/ewaras/5d260eb6431e34b08b3bc275', (perangkatData) => {
+      this.socket.on('/topic/ewaras/detail/5d2d0eb899fbf10012c264f6', (perangkatData) => {
         console.log(perangkatData)
             
       });

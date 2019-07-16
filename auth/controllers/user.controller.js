@@ -54,6 +54,36 @@ module.exports = {
       res.json(response.unAuthorized())
     }
   },
+  pasien_search: async(req,res)=>{
+    let response = new Response()
+    let token = Token.authorizationToken(req.headers)
+    if(token){
+      try{
+        response.setData(await userRepositories.pasienSearch(req.body.nik))
+      }catch(e){
+        response.setStatus(false)
+        response.setMessage(e)
+      }
+      res.json(response)
+    }else{
+      res.json(response.unAuthorized())
+    }
+  },
+  pasien_unroll: async(req,res)=>{
+    let response = new Response()
+    let token = Token.authorizationToken(req.headers)
+    if(token){
+      try{
+        response.setData(await userRepositories.pasienUnroll(req.body.idDokter,req.body.idPasien))
+      }catch(e){
+        response.setStatus(false)
+        response.setMessage(e)
+      }
+      res.json(response)
+    }else{
+      res.json(response.unAuthorized())
+    }
+  },
   dokter_enrolling: async(req,res)=>{
     let response = new Response()
       try{

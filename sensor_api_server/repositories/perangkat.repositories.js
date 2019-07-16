@@ -15,13 +15,28 @@ const perangkatRepositories = {
         if(latestUpdate){
             // emit to specific id perangkat
             socketApp.notifyDetailEwaras(id,latestUpdate)
-            let dokters = await api.getEnrolling(latestUpdate.idPasien)
-            if(dokters){
-                for(var i=0;i<dokters.data.length;i++){
-                    socketApp.notifyEwarasData(dokters.data._id,perangkatEachDokter)
-                }
-                return dokters.data
+
+            //emit to dokter enrolling
+            for(var i=0;i<latestUpdate.dokterEnrolling.length;i++){
+                let perangkats = await Perangkat.aggregate(
+                    [
+                        {
+                          '$match': {
+                            'dokterEnrolling.idDokter': new ObjectId(latestUpdate.dokterEnrolling[i].idDokter)
+                          }
+                        }
+                    ]
+                )
+                socketApp.notifyEwarasData(latestUpdate.dokterEnrolling[i].idDokter,perangkats)
             }
+            return latestUpdate
+            // let dokters = await api.getEnrolling(latestUpdate.idPasien)
+            // if(dokters){
+            //     for(var i=0;i<dokters.data.length;i++){
+            //         socketApp.notifyEwarasData(dokters.data._id,perangkatEachDokter)
+            //     }
+            //     return dokters.data
+            // }
             // let perangkatEachDokter = await Perangkat.find({
             //     idDokter: latestUpdate.idDokter
             // })
@@ -61,6 +76,23 @@ const perangkatRepositories = {
             idPasien: new ObjectId(idPasien)
           }, {
             $push: {
+              'dokterEnrolling': {
+                idDokter: new ObjectId(idDokter)
+              }
+            }
+          }
+        )
+        if(result){
+            return result
+        }else{
+            return false
+        }
+    },
+    dokterUnroll: async(idDokter,idPasien)=>{
+        let result = await Perangkat.update({
+            idPasien: new ObjectId(idPasien)
+          }, {
+            $pull: {
               'dokterEnrolling': {
                 idDokter: new ObjectId(idDokter)
               }

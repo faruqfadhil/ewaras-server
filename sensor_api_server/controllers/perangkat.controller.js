@@ -37,5 +37,15 @@ module.exports = {
       response.setMessage(e)
     }
     res.json(response) 
+  },
+  dokter_unroll: async(req, res)=>{
+    let response = new Response()
+    try{
+      response.setData(await perangkatRepositories.dokterUnroll(req.body.idDokter,req.body.idPasien))
+    }catch(e){
+      response.setStatus(false)
+      response.setMessage(e)
+    }
+    res.json(response) 
   }
 }

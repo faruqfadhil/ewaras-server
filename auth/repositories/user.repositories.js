@@ -119,16 +119,39 @@ const userRepositories = {
             return false
         }
     },
-    // userDelete: async(id)=>{
-    //     let result = await User.findByIdAndRemove(id)
-    //     return result
-    // },
-    // userUpdate:async(id,body)=>{
-    //     let result = await User.findByIdAndUpdate(id,{
-    //         $set:body
-    //     })
-    //     return result
-    // },
+    pasienSearch: async(nik)=>{
+        let result = await Pasien.find({
+            nik:nik
+        })
+        if(result){
+            return result
+        }else{
+            return false
+        }
+    },
+    pasienUnroll: async(idDokter,idPasien)=>{
+        let result = await Dokter.update({
+            _id: new ObjectId(idDokter)
+          }, {
+            $pull: {
+              'pasienEnrol': {
+                idPasien: new ObjectId(idPasien)
+              }
+            }
+          }
+        )
+        if(result){
+            let toPerangkat = await api.dokterUnroll(idDokter,idPasien)
+            if(toPerangkat.data){
+                return result
+            }else{
+                return false
+            }
+            
+        }else{
+            return false
+        }
+    },
     profile:async(idUser)=>{
         let result = await Pasien.findOne({
             idUser:idUser
