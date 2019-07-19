@@ -7,6 +7,44 @@ import axios from 'axios'
 import { type } from 'os';
 var Api = require("../services/Api")
 export default {
+  loginPost(params){
+    return axios.post(Api.userUrl()+'signin',params)
+  },
+  dokterProfile(token){
+    return axios.get(Api.userUrl()+'dokter/profile',{
+      headers:{
+        Authorization:token
+      }
+    })
+  },
+  dataOnDokter(token,params){
+    return axios.post(Api.userUrl()+'dokter/data',params,{
+      headers:{
+        Authorization:token
+      }
+    })
+  },
+  searchPasien(token,params){
+    return axios.post(Api.userUrl()+'pasien/search',params,{
+      headers:{
+        Authorization:token
+      }
+    })
+  },
+  enrollPasien(token,params){
+    return axios.post(Api.userUrl()+'dokter/pasien-enrol',params,{
+      headers:{
+        Authorization:token
+      }
+    })
+  },
+  unrollPasien(token,params){
+    return axios.post(Api.userUrl()+'pasien/unroll',params,{
+      headers:{
+        Authorization:token
+      }
+    })
+  },
   fetchPosts () {
     return axios.get(Api.deviceUrl()+'5ba50758e4dc4000191f0c99/detail', { 
         headers: { 
@@ -15,9 +53,6 @@ export default {
   },
   addPost(params){
     return axios.post(Api.userUrl()+'ptsignup',params)
-  },
-  loginPost(params){
-    return axios.post(Api.userUrl()+'signin',params)
   },
   createCow(token,params){
     return axios.post(Api.sapiUrl()+'create',params,{

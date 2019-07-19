@@ -84,6 +84,36 @@ module.exports = {
       res.json(response.unAuthorized())
     }
   },
+  detail_pasien: async(req,res)=>{
+    let response = new Response()
+    let token = Token.authorizationToken(req.headers)
+    if(token){
+      try{
+        response.setData(await userRepositories.detailPasien(req.body.idPasien))
+      }catch(e){
+        response.setStatus(false)
+        response.setMessage(e)
+      }
+      res.json(response)
+    }else{
+      res.json(response.unAuthorized())
+    }
+  },
+  data_on_dokter: async(req,res)=>{
+    let response = new Response()
+    let token = Token.authorizationToken(req.headers)
+    if(token){
+      try{
+        response.setData(await userRepositories.dataOnDokter(req.body.idDokter))
+      }catch(e){
+        response.setStatus(false)
+        response.setMessage(e)
+      }
+      res.json(response)
+    }else{
+      res.json(response.unAuthorized())
+    }
+  },
   dokter_enrolling: async(req,res)=>{
     let response = new Response()
       try{
@@ -164,6 +194,22 @@ module.exports = {
       let result_decode = jwt.verify(token, config.secret)
       try{
         response.setData(await userRepositories.profile(result_decode._doc._id))
+      }catch(e){
+        response.setStatus(false)
+        response.setMessage(e)
+      }
+      res.json(response)
+    }else{
+      res.json(response.unAuthorized())
+    }
+  },
+  dokter_profile: async(req,res)=>{
+    let response = new Response()
+    let token = Token.authorizationToken(req.headers)
+    if(token){
+      let result_decode = jwt.verify(token, config.secret)
+      try{
+        response.setData(await userRepositories.dokterProfile(result_decode._doc._id))
       }catch(e){
         response.setStatus(false)
         response.setMessage(e)

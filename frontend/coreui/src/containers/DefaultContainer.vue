@@ -3,7 +3,7 @@
     <AppHeader fixed>
       <SidebarToggler class="d-lg-none" display="md" mobile />
       <b-link class="navbar-brand" to="#">
-        <img class="navbar-brand-full" src="img/brand/logo.png" width="89" height="25" alt="CoreUI Logo">
+        <img class="navbar-brand-full" src="img/brand/logo.jpeg" width="89" height="25" alt="CoreUI Logo">
         <img class="navbar-brand-minimized" src="img/brand/sygnet.svg" width="30" height="30" alt="CoreUI Logo">
       </b-link>
       <SidebarToggler class="d-md-down-none" display="lg" />
@@ -51,7 +51,7 @@
       <!--footer-->
       <div>
         <!-- <a href="https://coreui.io">Seecow</a> -->
-        <span class="ml-1">&copy; 2018 Seecow</span>
+        <span class="ml-1">&copy; 2018 e-waras</span>
       </div>
       
     </TheFooter>

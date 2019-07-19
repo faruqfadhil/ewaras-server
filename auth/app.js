@@ -8,6 +8,7 @@ var morgan = require('morgan');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var config = require('./config/database');
+var cors = require('cors')
 
 mongoose.connect(config.database);
 
@@ -28,6 +29,7 @@ app.use(function(req, res, next) {
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(cors())
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

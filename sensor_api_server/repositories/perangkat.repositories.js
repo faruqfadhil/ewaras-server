@@ -14,17 +14,68 @@ const perangkatRepositories = {
         let latestUpdate = await Perangkat.findById(id)
         if(latestUpdate){
             // emit to specific id perangkat
-            socketApp.notifyDetailEwaras(id,latestUpdate)
+            let connectWith = await Perangkat.aggregate(
+              [
+                {
+                  '$match': {
+                    '_id': new ObjectId(id)
+                  }
+                }, {
+                  '$lookup': {
+                    'from': 'pasiens', 
+                    'localField': 'idPasien', 
+                    'foreignField': '_id', 
+                    'as': 'pasien_docs'
+                  }
+                }, {
+                  '$project': {
+                    'idntifier': 'perangkat', 
+                    'pasien_docs': '$pasien_docs', 
+                    'perangkats_docs': [
+                      {
+                        '_id': '$_id', 
+                        'idPasien': '$idPasien', 
+                        'statusDevice': '$statusDevice', 
+                        'data': '$data', 
+                        'dokterEnrolling': '$dokterEnrolling'
+                      }
+                    ]
+                  }
+                }
+              ]
+            )
+            socketApp.notifyDetailEwaras(id,connectWith)
 
             //emit to dokter enrolling
             for(var i=0;i<latestUpdate.dokterEnrolling.length;i++){
                 let perangkats = await Perangkat.aggregate(
                     [
-                        {
-                          '$match': {
-                            'dokterEnrolling.idDokter': new ObjectId(latestUpdate.dokterEnrolling[i].idDokter)
-                          }
+                      {
+                        '$match': {
+                          'dokterEnrolling.idDokter': new ObjectId(latestUpdate.dokterEnrolling[i].idDokter)
                         }
+                      }, {
+                        '$lookup': {
+                          'from': 'pasiens', 
+                          'localField': 'idPasien', 
+                          'foreignField': '_id', 
+                          'as': 'pasien_docs'
+                        }
+                      }, {
+                        '$project': {
+                          'identifier': 'pasien', 
+                          'perangkat_docs': [
+                            {
+                              '_id': '$_id', 
+                              'idPasien': '$idPasien', 
+                              'statusDevice': '$statusDevice', 
+                              'data': '$data', 
+                              'dokterEnrolling': '$dokterEnrolling'
+                            }
+                          ], 
+                          'pasien_docs': '$pasien_docs'
+                        }
+                      }
                     ]
                 )
                 socketApp.notifyEwarasData(latestUpdate.dokterEnrolling[i].idDokter,perangkats)

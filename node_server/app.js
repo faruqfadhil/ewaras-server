@@ -42,8 +42,8 @@ client.on("error", function (error) {
 
 const method ={
     saveToDb: async(suhu,detak,spo,id)=>{
-        var event = new Date();
-        var today = event.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+        var today = new Date();
+        // var today = event.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
         let result = await Perangkat.update({
             _id: new ObjectId(id)
           }, {

@@ -6,7 +6,7 @@ const deviceUrl = function(){
     return 'http://localhost:3001/api/perangkat/'
 }
 const userUrl = function(){
-      return 'http://159.65.6.122:3000/api/user/'
+      return 'http://192.168.20.100:3000/api/user/'
     //return 'http://localhost:3000/api/user/'
 }
 const sapiUrl = function(){

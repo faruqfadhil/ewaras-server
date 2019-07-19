@@ -7,7 +7,7 @@
             <b-row>
               <b-col sm="5">
                 <h4>
-                  <img src="img/cow/cow (2).png" width="50px" alt="CoreUI Logo">
+                  <img src="img/avatars/patient.png" width="50px" alt="CoreUI Logo">
                   {{nameOfCow}}
                 </h4>
                 <!-- <h4 id="traffic" class="card-title mb-0">Graph</h4> -->

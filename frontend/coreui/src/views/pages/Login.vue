@@ -77,7 +77,7 @@ export default {
        isProcess:true,
        username:"",
        password:"",
-       anu:"",
+       
       //  socket : io('localhost:3001'),
        errors: []
     }
@@ -91,31 +91,21 @@ export default {
   //   this.nganu();
   // },
   methods:{
-    // nganu(){
-    // //  var socket = io('http://localhost');
-    // //   socket.on('stream', function(data){
-    // //     this.anu = data.title;
-    // //   }); 
-    //    this.socket.on('/topic/coba', (data) => {
-    //         this.anu = data[0]._id;
-    //         // you can also do this.messages.push(data)
-    //     });
-    // },
     toRegis(){
       this.$router.push({ name: 'Register' })
     },
-    soket(){
-      this.socket.on('/topic/ewaras/detail/5d2d0eb899fbf10012c264f6', (perangkatData) => {
-        console.log(perangkatData)
+    // soket(){
+    //   this.socket.on('/topic/ewaras/5d2c4e1d2163c4001988075a', (perangkatData) => {
+    //     console.log(perangkatData)
             
-      });
-    },
+    //   });
+    // },
     checkForm:function(e){
       if(this.username && this.password ){
         this.isLoading=true
         this.isProcess=false
-        // this.postData();
-        this.soket()
+        this.postData();
+        // this.soket()
       }
       this.errors = []
       if(!this.username){
@@ -135,13 +125,16 @@ export default {
       if(response.data.status){
           let role = response.data.data.role
           if(role == Constants.ROLE_ADMIN){
-            window.localStorage.setItem("token",response.data.data.token)
-            window.localStorage.setItem("role",role)
+            // window.localStorage.setItem("token",response.data.data.token)
+            // window.localStorage.setItem("role",role)
             this.isLoading=false
-            this.$router.push({ name: 'Admin' })
-          }else{
+            // this.$router.push({ name: 'Admin' })
+          }else if(role == Constants.ROLE_PASIEN){
             // get peternak information
-              this.getMe(response.data.data.token,response.data.data.role)
+              // this.getMe(response.data.data.token,response.data.data.role)
+          }else{
+            // dokter
+            this.getMeDokter(response.data.data.token,response.data.data.role)
           }
       }else{
          this.errors = []
@@ -151,11 +144,11 @@ export default {
       }
       
     },
-    async getMe(token,role){
-      const response = await PostsService.me(token);
+    async getMeDokter(token,role){
+      const response = await PostsService.dokterProfile(token);
         window.localStorage.setItem("token",token)
         window.localStorage.setItem("role",role)
-        window.localStorage.setItem("peternak_id",response.data.data._id)
+        window.localStorage.setItem("id_dokter",response.data.data._id)
         this.isLoading=false
         this.$router.push({ name: 'Dashboard' })
       // console.log(items);
