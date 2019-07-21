@@ -18,6 +18,16 @@ module.exports = {
     }
     res.json(response) 
   },
+  perangkat_in_specific_time: async(req, res)=>{
+    let response = new Response()
+    try{
+      response.setData(await perangkatRepositories.perangkatInSpecificTime(req.body.idPasien,req.body.start,req.body.end))
+    }catch(e){
+      response.setStatus(false)
+      response.setMessage(e)
+    }
+    res.json(response) 
+  },
   perangkat_register: async(req, res)=>{
     let response = new Response()
     try{

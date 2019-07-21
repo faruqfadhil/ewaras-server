@@ -5,7 +5,7 @@ import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities'
 
 export default {
   extends: Line,
-  props: ["dataheart","datatemperature","dataheartlimit","datatemperaturelimit","heartupperlimit","temperatureupperlimit","options","labels"],
+  props: ["dataheart","datatemperature","dataspo","options","labels"],
   mounted() {
     this.renderLineChart();
   },
@@ -16,17 +16,8 @@ export default {
     chartDataTemperature: function(){
       return this.datatemperature;
     },
-    chartDataHeartLimit: function(){
-      return this.dataheartlimit;
-    },
-    chartDataTemperatureLimit: function(){
-      return this.datatemperaturelimit;
-    },
-    chartDataHeartUpperLimit: function(){
-      return this.heartupperlimit;
-    },
-    chartDataTemperatureUpperLimit: function(){
-      return this.temperatureupperlimit;
+    chartDataSpo: function(){
+      return this.dataspo;
     },
     labelsData: function(){
       return this.labels;
@@ -44,7 +35,7 @@ export default {
         datasets: [
           {
             label: "Heart Rate",
-            backgroundColor: 'transparent',
+            backgroundColor: hexToRgba('#f86c6b', 10),
             borderColor: brandDanger,
             pointHoverBackgroundColor: '#fff',
             borderWidth: 4,
@@ -52,47 +43,19 @@ export default {
           },
           {
             label: 'Temperature',
-            backgroundColor: 'transparent',
+            backgroundColor: hexToRgba('#20a8d8', 10),
             borderColor: brandInfo,
             pointHoverBackgroundColor: '#fff',
             borderWidth: 4,
             data: this.chartDataTemperature
           },
           {
-            label: 'Normal Heart Rate Lower Limit',
-            backgroundColor: hexToRgba(brandDanger, 10),
-            borderColor: brandDanger,
+            label: 'Spo',
+            backgroundColor: hexToRgba('#ffc107', 10),
+            borderColor: brandWarning,
             pointHoverBackgroundColor: '#fff',
-            borderWidth: 1,
-            borderDash: [8, 5],
-            data: this.chartDataHeartLimit
-          },
-          {
-            label: 'Normal Heart Rate Upper Limit',
-            backgroundColor:'transparent',
-            borderColor: brandDanger,
-            pointHoverBackgroundColor: '#fff',
-            borderWidth: 1,
-            borderDash: [8, 5],
-            data: this.chartDataHeartUpperLimit
-          },
-          {
-            label: 'Normal Temperature Lower Limit',
-            backgroundColor: hexToRgba(brandInfo, 10),
-            borderColor: brandInfo,
-            pointHoverBackgroundColor: '#fff',
-            borderWidth: 1,
-            borderDash: [8, 5],
-            data: this.chartDataTemperatureLimit
-          },
-          {
-            label: 'Normal Temperature Upper Limit',
-            backgroundColor: 'transparent',
-            borderColor: brandInfo,
-            pointHoverBackgroundColor: '#fff',
-            borderWidth: 1,
-            borderDash: [8, 5],
-            data: this.chartDataTemperatureUpperLimit
+            borderWidth: 4,
+            data: this.chartDataSpo
           }
         ]
       },

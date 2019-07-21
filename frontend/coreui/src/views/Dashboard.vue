@@ -322,27 +322,13 @@ export default {
           label: 'Enroll'
         }
       ],
-      // INITIAL
-      DeviceActive:0,
-      cowName:"",
-      
-      warningModal: false,
-      DeviceNonActive:0,
-      TemperatureAverage:0,
-      HeartRateAverage:0,
-      TemperatureGraph:[],
-      HeartGraph:[],
-      labelsData:[],
-      CurrentConditions:"",
-      suhuArrange:[],
       statusDeviceInStr:"",
       dateOnFormat:"",
-      dateOnFormatForAvg:"",
       existingData:false,
-      sapiList:[],
-      selected: 'Month',
       errors: [],
       successAlert: []
+      // INITIAL
+
     }
   },
   created(){
@@ -356,21 +342,6 @@ export default {
        */
       this.errors = []
       this.$refs.myModalRef.show()
-    },
-    async postCreateCowData() {
-      /**
-       * post create cow data
-       */
-      this.successAlert = []
-      const response = await PostsService.createCow(window.localStorage.getItem("token"),{
-                          namaSapi: this.cowName
-                        });
-      this.$refs.myModalRef.hide()
-      if(response.data.status){
-        this.successAlert.push('Congratulation,You have successfully register a new cow, our team will prepare your device, please refresh this page');
-      }
-      // setTimeout(location.reload(), 5000)
-      
     },
     async search() {
       /**
@@ -442,11 +413,7 @@ export default {
                           nik: this.nik
                         });
       return response.data
-      // this.$refs.myModalRef.hide()
-      // if(response.data.status){
-      //   this.successAlert.push('Congratulation,You have successfully register a new cow, our team will prepare your device, please refresh this page');
-      // }
-      // setTimeout(location.reload(), 5000)
+
       
     },
     async enrollPasien(id) {
@@ -510,28 +477,7 @@ export default {
               this.devicePending++
             }
           }
-          //   var active =0,inActive =0,avgSuhu=0,avgHeart=0;
-          //   for(var i=0;i<sapiData.length;i++){
-          //   avgSuhu += Number(sapiData[i].perangkat.data[sapiData[i].perangkat.data.length-1].suhu);
-          //   avgHeart += Number(sapiData[i].perangkat.data[sapiData[i].perangkat.data.length-1].jantung);
-          //   this.dateFormatter(sapiData[i].perangkat.data[sapiData[i].perangkat.data.length-1].tanggal);
-          //   if(sapiData[i].perangkat.status == 1){
-          //     active++;
-          //   }else{
-          //     inActive++;
-          //   }
-          // }
-          // avgSuhu = avgSuhu/sapiData.length;
-          // avgHeart = avgHeart/sapiData.length;
-          // this.tableItems = sapiData;
-          // this.DeviceActive = active;
-          // this.DeviceNonActive = inActive;
-          // this.TemperatureAverage = avgSuhu.toFixed(2);
-          // this.HeartRateAverage = avgHeart.toFixed(2);
-          // // chart operation
-          // this.HeartGraph.push(this.HeartRateAverage);
-          // this.TemperatureGraph.push(this.TemperatureAverage);
-          // this.labelsData.push(this.dateOnFormat)
+
             
       });
     },
@@ -573,29 +519,6 @@ export default {
           }
           this.tableItems = dokterData
           this.soket();
-          // var active =0,inActive =0,avgSuhu=0,avgHeart=0;
-          // for(var i=0;i<sapiData.length;i++){
-          //   avgSuhu += Number(sapiData[i].perangkat.data[sapiData[i].perangkat.data.length-1].suhu);
-          //   avgHeart += Number(sapiData[i].perangkat.data[sapiData[i].perangkat.data.length-1].jantung);
-          //   this.dateFormatter(sapiData[i].perangkat.data[sapiData[i].perangkat.data.length-1].tanggal);
-          //   if(sapiData[i].perangkat.status == 1){
-          //     active++;
-          //   }else{
-          //     inActive++;
-          //   }
-          // }
-          // avgSuhu = avgSuhu/sapiData.length;
-          // avgHeart = avgHeart/sapiData.length;
-          // this.tableItems = sapiData;
-          // this.DeviceActive = active;
-          // this.DeviceNonActive = inActive;
-          // this.TemperatureAverage = avgSuhu.toFixed(2);
-          // this.HeartRateAverage = avgHeart.toFixed(2);
-          // // chart operation
-          // this.HeartGraph.push(this.HeartRateAverage);
-          // this.TemperatureGraph.push(this.TemperatureAverage);
-          // this.labelsData.push(this.dateOnFormat)
-          // this.soket();
       }else{
         this.existingData=false
       }

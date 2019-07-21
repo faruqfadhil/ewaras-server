@@ -7,6 +7,7 @@ var config = require('./config/database');
 var Perangkat = require("./model/perangkat.model");
 var ObjectId = require('mongoose').Types.ObjectId;
 var api = require("./services/Outapi");
+var Constant = require('./services/Constant');
 
 // comment this when no mongo DB installed on your server
 mongoose.connect(config.database)
@@ -43,7 +44,14 @@ client.on("error", function (error) {
 const method ={
     saveToDb: async(suhu,detak,spo,id)=>{
         var today = new Date();
-        // var today = event.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+        var tmpSuhu = Number(suhu)
+        var tmpJantung = Number(detak)
+        var tmpSpo = Number(spo)
+        var tmpKondisi = Constant.NORMAL_CONDITION
+        if (tmpJantung < Constant.HEARTRATE_LOWER_LIMIT || tmpJantung > Constant.HEARTRATE_UPPER_LIMIT || tmpSuhu < Constant.TEMPERATURE_LOWER_LIMIT || tmpSuhu > Constant.TEMPERATURE_UPPER_LIMIT || tmpSpo < Constant.SPO_LOWER_LIMIT || tmpSpo > Constant.SPO_UPPER_LIMIT) {
+          // abnormal
+          tmpKondisi = Constant.ABNORMAL_CONDITION
+        }
         let result = await Perangkat.update({
             _id: new ObjectId(id)
           }, {
@@ -56,7 +64,7 @@ const method ={
                 suhu: suhu,
                 jantung: detak,
                 spo:spo,
-                kondisi: 1
+                kondisi: tmpKondisi
               }
             }
           }

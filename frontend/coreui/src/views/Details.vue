@@ -8,12 +8,11 @@
               <b-col sm="5">
                 <h4>
                   <img src="img/avatars/patient.png" width="50px" alt="CoreUI Logo">
-                  {{nameOfCow}}
+                  {{patientName}}
                 </h4>
-                <!-- <h4 id="traffic" class="card-title mb-0">Graph</h4> -->
-                <!-- <div class="small text-muted">{{dateOnFormat}}</div> -->
-                <b-badge v-bind:variant="conditions">{{CurrentConditions}}</b-badge>|
-                <b-badge v-bind:variant="statusDevice">{{statusDeviceInStr}}</b-badge>
+
+                <b-badge v-bind:variant="getKondisi(CurrentConditions)">{{CurrentConditions== 0 ? "Abnormal":"Normal"}}</b-badge>|
+                <b-badge v-bind:variant="getBadge(statusDevice)">{{ statusDevice == 0 ? "Nonactive": statusDevice == 1 ? "Active":"Pending"}}</b-badge>
               </b-col>
               <b-col sm="7">
                 <b-form inline class="float-right">
@@ -52,15 +51,12 @@
               :labels="labelsData"
               :dataheart="dataChartHeart"
               :datatemperature="dataChartTemp"
-              :dataheartlimit="dataChartHeartLimit"
-              :datatemperaturelimit="dataChartTemperatureLimit"
-              :temperatureupperlimit="dataChartTemperatureUpperLimit"
-              :heartupperlimit="dataChartHeartUpperLimit"
+              :dataspo="dataChartSpo"
               :options="{responsive: true, maintainAspectRatio: false}"
             ></line-chart>
             <div slot="footer">
               <b-row class="text-center">
-                <b-col class="mb-sm-6 mb-0">
+                <b-col class="mb-sm-4 mb-0">
                   <div class="text-muted">Temperature</div>
                   <strong>{{currentTemp}}</strong>
                   <b-progress
@@ -71,7 +67,7 @@
                   ></b-progress>
                 </b-col>
 
-                <b-col class="mb-sm-6 mb-0">
+                <b-col class="mb-sm-4 mb-0">
                   <div class="text-muted">Heart Rate</div>
                   <strong>{{currentHeart}}</strong>
                   <b-progress
@@ -79,6 +75,17 @@
                     class="progress-xs mt-2"
                     :precision="1"
                     variant="danger"
+                    v-bind:value="100"
+                  ></b-progress>
+                </b-col>
+                <b-col class="mb-sm-4 mb-0">
+                  <div class="text-muted">Spo</div>
+                  <strong>{{currentSpo}}</strong>
+                  <b-progress
+                    height="{}"
+                    class="progress-xs mt-2"
+                    :precision="1"
+                    variant="warning"
                     v-bind:value="100"
                   ></b-progress>
                 </b-col>
@@ -106,7 +113,11 @@
                   :variant="getKondisi(data.item.kondisi)"
                 >{{data.item.kondisi == 0 ? "Abnormal":"Normal"}}</b-badge>
               </div>
-
+              <div slot="key-tanggal" slot-scope="data">
+                <b-badge
+                  :variant="dateFormatter(data.item.tanggal)"
+                >{{data.item.tanggal | formatDate}}</b-badge>
+              </div>
               <div slot="key-suhu" slot-scope="data">
                 <strong>{{data.item.suhu.toFixed(2)}}</strong>
                 <div class="small text-muted">Celcius</div>
@@ -115,10 +126,9 @@
                 <strong>{{data.item.jantung.toFixed(2)}}</strong>
                 <div class="small text-muted">BPM</div>
               </div>
-              <div slot="key-tanggal" slot-scope="data">
-                <b-badge
-                  :variant="dateFormatter(data.item.tanggal)"
-                >{{data.item.tanggal | formatDate}}</b-badge>
+              <div slot="key-spo" slot-scope="data">
+                <strong>{{data.item.spo.toFixed(2)}}</strong>
+                <div class="small text-muted">Percent</div>
               </div>
             </b-table>
             <nav>
@@ -205,6 +215,32 @@ export default {
   },
   data() {
     return {
+      // INITIAL
+      patientName:"",
+      CurrentConditions: "",
+      statusDevice: "",
+      tableItems: [],
+      tableFields: [
+        {
+          key:'key-kondisi',
+          label:'Condition'
+        },
+        { key: 'key-tanggal', 
+          label: 'Time' 
+        },
+        { key: 'key-suhu', 
+          label: 'Temperature' 
+        },
+        { key: 'key-jantung', 
+          label: 'Heart Rate' 
+        },
+        { key: 'key-spo', 
+          label: 'Oxygen'
+        }
+      ],
+      dataChartHeart: [],
+      dataChartTemp: [],
+      dataChartSpo: [],
       isLoading: false,
       isProcess: true,
       currentPage: 1,
@@ -212,35 +248,31 @@ export default {
       totalRows: 0,
       page: 1,
       tableItemsLength: 0,
-      dataChartHeart: [],
-      dataChartTemp: [],
-      dataChartHeartLimit: [],
-      dataChartHeartUpperLimit: [],
-      dataChartTemperatureLimit: [],
-      dataChartTemperatureUpperLimit: [],
       labelsData: [],
-      statusDeviceInStr: "",
-      statusDevice: "",
+      currentTemp: 0,
+      currentHeart: 0,
+      currentSpo:0,
+      socket: io(Constants.SOCKET_SERVER),
+      dateOnFormat: "",
+      startDate: "",
+      endDate: "",
+      // INITIAL
+
+
+
+
+      
+      
+      
       conditions: "",
       test: [4, 4, 4, 4, 4, 4],
       nameOfCow: "",
-      socket: io(Constants.SOCKET_SERVER),
-      CurrentConditions: "",
-      dateOnFormat: "",
-      currentTemp: 0,
-      currentHeart: 0,
-      tableItems: [],
-      tableFields: [
-        {
-          key: "key-kondisi",
-          label: "Condition"
-        },
-        { key: "key-suhu", label: "Temperature" },
-        { key: "key-jantung", label: "Heart Rate" },
-        { key: "key-tanggal", label: "Time" }
-      ],
-      startDate: "",
-      endDate: ""
+
+      
+
+
+
+
     };
   },
   created() {
@@ -260,7 +292,7 @@ export default {
       if (!window.localStorage.getItem("token")) {
         this.$router.push({ name: "Login" });
       } else {
-        if (window.localStorage.getItem("role") != Constants.ROLE_FARMERS) {
+        if (window.localStorage.getItem("role") != Constants.ROLE_DOKTER) {
           // redirect to 404 page
           this.$router.push({ name: "Page404" });
         } else {
@@ -268,75 +300,73 @@ export default {
         }
       }
     },
-    async fetchDataSapi() {
-      const response = await PostsService.getSapiDetail(
-        window.localStorage.getItem("token"),
-        this.$route.params.id
-      );
-      return response.data;
-    },
-    async fetchDataToday() {
-      const response = await PostsService.getDataToday(
+    // FETCH DATA
+    async fetchDataFirst() {
+      const response = await PostsService.detailPasien(
         window.localStorage.getItem("token"),
         {
-          idSapi: this.$route.params.id
+          idPasien: this.$route.params.id
         }
       );
       return response.data;
     },
     async fetchDataInTime() {
-      const response = await PostsService.getDataInTime(
-        window.localStorage.getItem("token"),
+      const response = await PostsService.perangkatSpecificTime(
         {
-          idSapi: this.$route.params.id,
+          idPasien: this.$route.params.id,
           start: this.startDate,
           end: this.endDate
         }
       );
       return response.data;
     },
-    soket() {
+    // async fetchDataSapi() {
+    //   const response = await PostsService.getSapiDetail(
+    //     window.localStorage.getItem("token"),
+    //     this.$route.params.id
+    //   );
+    //   return response.data;
+    // },
+    // async fetchDataToday() {
+    //   const response = await PostsService.getDataToday(
+    //     window.localStorage.getItem("token"),
+    //     {
+    //       idSapi: this.$route.params.id
+    //     }
+    //   );
+    //   return response.data;
+    // },
+
+    // FETCH DATA
+    soket(id_perangkat) {
       this.socket.on(
-        "/topic/cows/detail/" + this.$route.params.id,
-        sapiData => {
+        "/topic/ewaras/detail/" + id_perangkat,
+        perangkatData => {
+          const pasienData = perangkatData[0]
           // this.tableItems = sapiData.perangkat.data;
-          this.currentTemp = sapiData.perangkat.data[
-            sapiData.perangkat.data.length - 1
-          ].suhu.toFixed(2);
-          this.currentHeart = sapiData.perangkat.data[
-            sapiData.perangkat.data.length - 1
-          ].jantung.toFixed(2);
-          this.getBadge(sapiData.perangkat.status);
-          this.getKondisi(
-            sapiData.perangkat.data[sapiData.perangkat.data.length - 1].kondisi
-          );
+          this.currentTemp = pasienData.perangkats_docs[0].data[pasienData.perangkats_docs[0].data.length-1].suhu.toFixed(2);
+          this.currentHeart = pasienData.perangkats_docs[0].data[pasienData.perangkats_docs[0].data.length-1].jantung.toFixed(2);
+          this.currentSpo = pasienData.perangkats_docs[0].data[pasienData.perangkats_docs[0].data.length-1].spo.toFixed(2);
+          this.CurrentConditions = pasienData.perangkats_docs[0].data[pasienData.perangkats_docs[0].data.length-1].kondisi
+          this.statusDevice = pasienData.perangkats_docs[0].statusDevice
           this.dateFormatter(
-            sapiData.perangkat.data[sapiData.perangkat.data.length - 1].tanggal
+            pasienData.perangkats_docs[0].data[pasienData.perangkats_docs[0].data.length-1].tanggal
           );
           // Chart operation
           if (this.dataChartHeart.length > 120) {
             this.dataChartHeart.shift();
             this.dataChartTemp.shift();
-            this.dataChartHeartLimit.shift();
-            this.dataChartHeartUpperLimit.shift();
-            this.dataChartTemperatureLimit.shift();
-            this.dataChartTemperatureUpperLimit.shift();
+            this.dataChartSpo.shift();
             this.labelsData.shift();
 
             this.dataChartHeart.push(this.currentHeart);
             this.dataChartTemp.push(this.currentTemp);
-            this.dataChartHeartLimit.push(48);
-            this.dataChartHeartUpperLimit.push(80);
-            this.dataChartTemperatureLimit.push(37);
-            this.dataChartTemperatureUpperLimit.push(39);
+            this.dataChartSpo.push(this.currentSpo);
             this.labelsData.push(this.dateOnFormat);
           } else {
             this.dataChartHeart.push(this.currentHeart);
             this.dataChartTemp.push(this.currentTemp);
-            this.dataChartHeartLimit.push(48);
-            this.dataChartHeartUpperLimit.push(80);
-            this.dataChartTemperatureLimit.push(37);
-            this.dataChartTemperatureUpperLimit.push(39);
+            this.dataChartSpo.push(this.currentSpo);
             this.labelsData.push(this.dateOnFormat);
           }
 
@@ -348,91 +378,55 @@ export default {
     async firstLoad() {
       this.dataChartHeart = [];
       this.dataChartTemp = [];
-      this.dataChartHeartLimit = [];
-      this.dataChartHeartUpperLimit = [];
-      this.dataChartTemperatureLimit = [];
-      this.dataChartTemperatureUpperLimit = [];
+      this.dataChartSpo = []
       this.labelsData = [];
-      this.tableItems = [];
-      const response = await this.fetchDataToday();
-      let sapiData = response.data[0]; //because response data in array
-      // console.log(this.selected)
-      this.nameOfCow = sapiData.namaSapi;
-      // this.tableItems = sapiData.perangkat.data;
-      this.getBadge(sapiData.perangkat.status);
-      this.getKondisi(
-        sapiData.perangkat.data[sapiData.perangkat.data.length - 1].kondisi
-      );
-      this.currentTemp = sapiData.perangkat.data[
-        sapiData.perangkat.data.length - 1
-      ].suhu.toFixed(2);
-      this.currentHeart = sapiData.perangkat.data[
-        sapiData.perangkat.data.length - 1
-      ].jantung.toFixed(2);
-      this.soket();
+      const response = await this.fetchDataFirst()
+      let pasienData = response.data[0]
+      this.patientName = pasienData.pasien_docs[0].nama
+      this.CurrentConditions= pasienData.perangkats_docs[0].data[pasienData.perangkats_docs[0].data.length-1].kondisi
+      this.statusDevice = pasienData.perangkats_docs[0].statusDevice
+      // this.tableItems = pasienData.perangkats_docs[0].data
+      this.soket(pasienData.perangkats_docs[0]._id)
+
     },
     async processDataInTime() {
       this.isLoading = true;
       this.isProcess = false;
-      this.socket.removeListener("/topic/cows/detail/" + this.$route.params.id);
+      const response = await this.fetchDataInTime();
+      let pasienData = response.data[0];
+      this.socket.removeListener("/topic/ewaras/detail/" + pasienData.perangkats_docs[0]._id);
       this.dataChartHeart = [];
       this.dataChartTemp = [];
-      this.dataChartHeartLimit = [];
-      this.dataChartHeartUpperLimit = [];
-      this.dataChartTemperatureLimit = [];
-      this.dataChartTemperatureUpperLimit = [];
+      this.dataChartSpo = []
       this.labelsData = [];
       this.tableItems = [];
-      const response = await this.fetchDataInTime();
-      let sapiData = response.data[0]; //because response data in array
-      // console.log(this.selected)
-      this.tableItems = sapiData.perangkat.data;
+
+      this.tableItems = pasienData.perangkats_docs[0].data
       this.tableItemsLength = this.tableItems.length;
-      console.log(this.tableItemsLength);
-      this.getBadge(sapiData.perangkat.status);
-      this.getKondisi(
-        sapiData.perangkat.data[sapiData.perangkat.data.length - 1].kondisi
-      );
-      this.currentTemp = sapiData.perangkat.data[
-        sapiData.perangkat.data.length - 1
-      ].suhu.toFixed(2);
-      this.currentHeart = sapiData.perangkat.data[
-        sapiData.perangkat.data.length - 1
-      ].jantung.toFixed(2);
-      for (var i = 0; i < sapiData.perangkat.data.length; i++) {
-        this.dataChartHeart.push(sapiData.perangkat.data[i].suhu.toFixed(2));
-        this.dataChartTemp.push(sapiData.perangkat.data[i].jantung.toFixed(2));
-        this.dataChartHeartLimit.push(48);
-        this.dataChartHeartUpperLimit.push(80);
-        this.dataChartTemperatureLimit.push(37);
-        this.dataChartTemperatureUpperLimit.push(39);
-        this.dateFormatter(sapiData.perangkat.data[i].tanggal);
+      this.CurrentConditions= pasienData.perangkats_docs[0].data[pasienData.perangkats_docs[0].data.length-1].kondisi
+      this.statusDevice = pasienData.perangkats_docs[0].statusDevice
+     
+      this.currentTemp = pasienData.perangkats_docs[0].data[pasienData.perangkats_docs[0].data.length-1].suhu.toFixed(2);
+      this.currentHeart = pasienData.perangkats_docs[0].data[pasienData.perangkats_docs[0].data.length-1].jantung.toFixed(2);
+      this.currentSpo = pasienData.perangkats_docs[0].data[pasienData.perangkats_docs[0].data.length-1].spo.toFixed(2);
+          
+      for (var i = 0; i < pasienData.perangkats_docs[0].data.length; i++) {
+        this.dataChartHeart.push(pasienData.perangkats_docs[0].data[i].jantung.toFixed(2));
+        this.dataChartTemp.push(pasienData.perangkats_docs[0].data[i].suhu.toFixed(2));
+        this.dataChartSpo.push(pasienData.perangkats_docs[0].data[i].spo.toFixed(2));
+        
+        this.dateFormatter(pasienData.perangkats_docs[0].data[i].tanggal);
         this.labelsData.push(this.dateOnFormat);
       }
       this.isProcess = true;
       this.isLoading = false;
     },
     getBadge(status) {
-      if (status == 0) {
-        this.statusDeviceInStr = "Device Nonactive";
-        this.statusDevice = "danger";
-      } else {
-        this.statusDeviceInStr = "Device Active";
-        this.statusDevice = "success";
-      }
-      return status == 0 ? "danger" : "success";
+
+      return status == 0 ? "danger": status == 1 ? "success":"default"
     },
-    getKondisi(tmp) {
-      var kondisiPointer = 0;
-      if (Number(tmp) == 0) {
-        this.CurrentConditions = "Abnormal";
-        this.conditions = "danger";
-      } else {
-        kondisiPointer = 1;
-        this.CurrentConditions = "Normal";
-        this.conditions = "success";
-      }
-      return kondisiPointer == 0 ? "danger" : "success";
+    getKondisi(tmp){
+      return tmp == 0 ? 'danger' : 'success'
     },
     dateFormatter(date) {
       var created_date = new Date(date);

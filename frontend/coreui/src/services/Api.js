@@ -3,7 +3,7 @@
  * List API baseUrl
  */
 const deviceUrl = function(){
-    return 'http://localhost:3001/api/perangkat/'
+    return 'http://192.168.20.100:3002/api/perangkat/'
 }
 const userUrl = function(){
       return 'http://192.168.20.100:3000/api/user/'

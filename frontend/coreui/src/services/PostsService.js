@@ -45,6 +45,16 @@ export default {
       }
     })
   },
+  detailPasien(token,params){
+    return axios.post(Api.userUrl()+'pasien/detail',params,{
+      headers:{
+        Authorization:token
+      }
+    })
+  },
+  perangkatSpecificTime(params){
+    return axios.post(Api.deviceUrl()+'specific-time',params)
+  },
   fetchPosts () {
     return axios.get(Api.deviceUrl()+'5ba50758e4dc4000191f0c99/detail', { 
         headers: { 

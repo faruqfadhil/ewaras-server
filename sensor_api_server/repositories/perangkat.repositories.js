@@ -155,6 +155,70 @@ const perangkatRepositories = {
         }else{
             return false
         }
+    },
+    perangkatInSpecificTime: async(idPasien,start,end)=>{
+      let result = await Perangkat.aggregate(
+        [
+          {
+            '$match': {
+              'idPasien': new ObjectId(idPasien)
+            }
+          }, {
+            '$lookup': {
+              'from': 'pasiens', 
+              'localField': 'idPasien', 
+              'foreignField': '_id', 
+              'as': 'pasien_docs'
+            }
+          }, {
+            '$unwind': {
+              'path': '$data', 
+              'includeArrayIndex': 'arrayIndex', 
+              'preserveNullAndEmptyArrays': false
+            }
+          }, {
+            '$match': {
+              'data.tanggal': {
+                '$gte': new Date(start), 
+                '$lte': new Date(end)
+              }
+            }
+          }, {
+            '$group': {
+              '_id': {
+                '_id': '$_id', 
+                'idPasien': '$idPasien', 
+                'statusDevice': '$statusDevice', 
+                'dokterEnrolling': '$dokterEnrolling', 
+                'pasien_docs': '$pasien_docs'
+              }, 
+              'listResult': {
+                '$push': '$data'
+              }
+            }
+          }, {
+            '$project': {
+              '_id': '$_id._id', 
+              'identifier': 'perangkat', 
+              'pasien_docs': '$_id.pasien_docs', 
+              'perangkats_docs': [
+                {
+                  '_id': '$_id._id', 
+                  'idPasien': '$_id.idPasien', 
+                  'statusDevice': '$_id.statusDevice', 
+                  'data': '$listResult', 
+                  'dokterEnrolling': '$_id.dokterEnrolling'
+                }
+              ]
+            }
+          }
+        ]
+      )
+      if(result){
+        return result
+      }else{
+        return false
+      }
     }
 
 
