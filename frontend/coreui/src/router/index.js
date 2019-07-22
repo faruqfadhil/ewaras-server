@@ -11,8 +11,10 @@ const Admin = () => import('@/views/admin/Admin')
 const RequestedCows = () => import('@/views/admin/RequestedCows')
 const Label = () => import('@/views/admin/Label')
 const Attributes = () => import('@/views/admin/Attributes')
+const Dokter = () => import('@/views/admin/Dokter')
 const Training = () => import('@/views/admin/Training')
 const Solutions = () => import('@/views/admin/Solutions')
+const Pasien = () => import('@/views/admin/Pasien')
 
 const Colors = () => import('@/views/theme/Colors')
 const Typography = () => import('@/views/theme/Typography')
@@ -107,6 +109,16 @@ export default new Router({
           component: RequestedCows
         },
         {
+          path: '/admin/dokter',
+          name : 'Dokters',
+          component: Dokter
+        },
+        {
+          path: '/admin/pasien',
+          name : 'Pasien',
+          component: Pasien
+        },
+        {
           path: '/admin/label',
           name : 'Label',
           component: Label
@@ -130,6 +142,11 @@ export default new Router({
           path: '/expert-system/history',
           name : 'History',
           component: History
+        },
+        {
+          path: '/pasien/pasien',
+          name : 'Pasien',
+          component: Pasien
         },
         {
           path: 'expert-system',

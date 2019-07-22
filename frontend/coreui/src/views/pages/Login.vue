@@ -125,13 +125,14 @@ export default {
       if(response.data.status){
           let role = response.data.data.role
           if(role == Constants.ROLE_ADMIN){
-            // window.localStorage.setItem("token",response.data.data.token)
-            // window.localStorage.setItem("role",role)
+            window.localStorage.setItem("token",response.data.data.token)
+            window.localStorage.setItem("role",role)
             this.isLoading=false
-            // this.$router.push({ name: 'Admin' })
+            this.$router.push({ name: 'Admin' })
           }else if(role == Constants.ROLE_PASIEN){
             // get peternak information
               // this.getMe(response.data.data.token,response.data.data.role)
+              this.getMePasien(response.data.data.token,response.data.data.role)
           }else{
             // dokter
             this.getMeDokter(response.data.data.token,response.data.data.role)
@@ -151,6 +152,15 @@ export default {
         window.localStorage.setItem("id_dokter",response.data.data._id)
         this.isLoading=false
         this.$router.push({ name: 'Dashboard' })
+      // console.log(items);
+    },
+    async getMePasien(token,role){
+      const response = await PostsService.pasienProfile(token);
+        window.localStorage.setItem("token",token)
+        window.localStorage.setItem("role",role)
+        window.localStorage.setItem("id_pasien",response.data.data._id)
+        this.isLoading=false
+        this.$router.push({ name: 'Pasien' })
       // console.log(items);
     }
 

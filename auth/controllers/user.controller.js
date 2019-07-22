@@ -39,6 +39,21 @@ module.exports = {
       res.json(response)
     }
   },
+  user_signup: async(req,res)=>{
+    let response = new Response()
+    if (!req.body.username || !req.body.password ) {
+      response.setStatus(false)
+      response.setMessage('Please pass the require form')
+    }else{
+      try{
+        response.setData(await userRepositories.userSignup(req.body.username,req.body.password,req.body.role))
+      }catch (e) {
+        response.setStatus(false)
+        response.setMessage(e)
+      }
+      res.json(response)
+    }
+  },
   pasien_enrol: async(req,res)=>{
     let response = new Response()
     let token = Token.authorizationToken(req.headers)
@@ -90,6 +105,51 @@ module.exports = {
     if(token){
       try{
         response.setData(await userRepositories.detailPasien(req.body.idPasien))
+      }catch(e){
+        response.setStatus(false)
+        response.setMessage(e)
+      }
+      res.json(response)
+    }else{
+      res.json(response.unAuthorized())
+    }
+  },
+  all_pasien: async(req,res)=>{
+    let response = new Response()
+    let token = Token.authorizationToken(req.headers)
+    if(token){
+      try{
+        response.setData(await userRepositories.allPasien())
+      }catch(e){
+        response.setStatus(false)
+        response.setMessage(e)
+      }
+      res.json(response)
+    }else{
+      res.json(response.unAuthorized())
+    }
+  },
+  all_pasien_pending: async(req,res)=>{
+    let response = new Response()
+    let token = Token.authorizationToken(req.headers)
+    if(token){
+      try{
+        response.setData(await userRepositories.allPasienPending())
+      }catch(e){
+        response.setStatus(false)
+        response.setMessage(e)
+      }
+      res.json(response)
+    }else{
+      res.json(response.unAuthorized())
+    }
+  },
+  all_dokter: async(req,res)=>{
+    let response = new Response()
+    let token = Token.authorizationToken(req.headers)
+    if(token){
+      try{
+        response.setData(await userRepositories.allDokter())
       }catch(e){
         response.setStatus(false)
         response.setMessage(e)

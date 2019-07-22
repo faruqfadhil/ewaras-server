@@ -17,6 +17,34 @@ export default {
       }
     })
   },
+  pasienProfile(token){
+    return axios.get(Api.userUrl()+'pasien/profile',{
+      headers:{
+        Authorization:token
+      }
+    })
+  },
+  allPasien(token){
+    return axios.get(Api.userUrl()+'pasien/all',{
+      headers:{
+        Authorization:token
+      }
+    })
+  },
+  allPasienPending(token){
+    return axios.get(Api.userUrl()+'pasien/pending',{
+      headers:{
+        Authorization:token
+      }
+    })
+  },
+  allDokter(token){
+    return axios.get(Api.userUrl()+'dokter/all',{
+      headers:{
+        Authorization:token
+      }
+    })
+  },
   dataOnDokter(token,params){
     return axios.post(Api.userUrl()+'dokter/data',params,{
       headers:{

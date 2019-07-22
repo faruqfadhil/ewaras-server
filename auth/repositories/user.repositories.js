@@ -191,6 +191,57 @@ const userRepositories = {
         }
         
     },
+    allDokter:async()=>{
+        let result = await Dokter.find()
+        if(result){
+            return result
+        }else{
+            return false
+        }
+        
+    },
+    allPasien:async()=>{
+        let result = await Pasien.aggregate(
+            [
+                {
+                  '$lookup': {
+                    'from': 'perangkats', 
+                    'localField': '_id', 
+                    'foreignField': 'idPasien', 
+                    'as': 'perangkats_docs'
+                  }
+                }
+              ]
+        )
+        if(result){
+            return result
+        }else{
+            return false
+        }
+    },
+    allPasienPending:async()=>{
+        let result = await Pasien.aggregate(
+            [
+                {
+                  '$lookup': {
+                    'from': 'perangkats', 
+                    'localField': '_id', 
+                    'foreignField': 'idPasien', 
+                    'as': 'perangkats_docs'
+                  }
+                }, {
+                  '$match': {
+                    'perangkats_docs.statusDevice': 2
+                  }
+                }
+              ]
+        )
+        if(result){
+            return result
+        }else{
+            return false
+        }
+    },
     dokterProfile:async(idUser)=>{
         let result = await Dokter.findOne({
             idUser:idUser
@@ -201,6 +252,17 @@ const userRepositories = {
             return false
         }
         
+    },
+    userSignup: async(username,password,role)=>{
+        let newUser = new User({
+            username: username,
+            password: password,
+            role: role
+        });
+        let saveUser = await newUser.save()
+        if(saveUser){
+            return saveUser
+        }
     },
     dokterEnrolling: async(idPasien)=>{
         let result = await Dokter.aggregate(

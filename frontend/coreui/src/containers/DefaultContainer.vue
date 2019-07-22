@@ -95,9 +95,11 @@ export default {
   },
   methods:{
     loadNav:function(){
-      if(window.localStorage.getItem("role") == Constants.ROLE_FARMERS){
+      if(window.localStorage.getItem("role") == Constants.ROLE_DOKTER){
           // redirect to 404 page
-           this.nav = nav.MENU_FARMERS
+           this.nav = nav.MENU_DOKTERS
+        }else if(window.localStorage.getItem("role") == Constants.ROLE_PASIEN){
+          this.nav = nav.MENU_PASIEN
         }else{
           this.nav = nav.MENU_ADMIN
         }

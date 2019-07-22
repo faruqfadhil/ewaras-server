@@ -14,7 +14,6 @@
 //   }
 export default{
   ROLE_ADMIN:1,
-  ROLE_FARMERS:2,
   ROLE_DOKTER:2,
   ROLE_PASIEN:3,
   SOCKET_SERVER:'192.168.20.100:3002',

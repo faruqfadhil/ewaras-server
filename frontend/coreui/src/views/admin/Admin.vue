@@ -7,17 +7,17 @@
           <div class="h1 text-muted text-right mb-4">
             <i class="icon-people"></i>
           </div>
-          <div class="h4 mb-0">{{peternakRegistered}}</div>
-          <small class="text-muted text-uppercase font-weight-bold">Farmers Registered</small>
-          <b-progress height="{}" class="progress-xs mt-3 mb-0" variant="info" :value="peternakRegistered"/>
+          <div class="h4 mb-0">{{dokterRegistered}}</div>
+          <small class="text-muted text-uppercase font-weight-bold">Dokters Registered</small>
+          <b-progress height="{}" class="progress-xs mt-3 mb-0" variant="info" :value="dokterRegistered"/>
         </b-card>
         <b-card>
           <div class="h1 text-muted text-right mb-4">
             <i class="icon-people"></i>
           </div>
-          <div class="h4 mb-0">{{sapiRegistered}}</div>
-          <small class="text-muted text-uppercase font-weight-bold">Cows Registered</small>
-          <b-progress height="{}" class="progress-xs mt-3 mb-0" variant="success" :value="sapiRegistered"/>
+          <div class="h4 mb-0">{{pasienRegistered}}</div>
+          <small class="text-muted text-uppercase font-weight-bold">Patients Registered</small>
+          <b-progress height="{}" class="progress-xs mt-3 mb-0" variant="success" :value="pasienRegistered"/>
         </b-card>
         <b-card>
           <div class="h1 text-muted text-right mb-4">
@@ -46,7 +46,7 @@
       </b-card-group>
     <b-row>
       <b-col md="12">
-        <b-card header="Farmers List" class="card-accent-warning">
+        <b-card header="Requested Devices" class="card-accent-warning">
           <b-table
             class="mb-0 table-outline"
             striped
@@ -56,19 +56,40 @@
             :fields="tableFields"
             head-variant="light"
           >
-            <div slot="key-nama" slot-scope="data">
-              <img src="img/avatars/breder.jpg" width="50px" alt="farmers logo">
-              <strong> {{data.item.peternak_docs[0].nama}}</strong>
+            <div slot="namaPasien" slot-scope="data">
+              <img src="img/avatars/patient.png" width="50px" alt="farmers logo">
+              <strong>{{data.item.nama}}</strong>
             </div>
             <div slot="key-alamat" slot-scope="data">
               <i class="icon-direction"></i>
-              <strong> {{data.item.peternak_docs[0].alamat}}</strong>
+              <strong> {{data.item.alamat}}</strong>
             </div>
-            <div slot="key-telphone" slot-scope="data">
-             
-             <h5><b-badge variant="warning">{{data.item.peternak_docs[0].noTelp}}</b-badge></h5>
-            
+              <div slot="key-telp" slot-scope="data">
+              <h5>
+                <b-badge variant="warning">{{data.item.noTelp}}</b-badge>
+              </h5>
             </div>
+            <div slot="key-id" slot-scope="data">
+              <b-link class="card-header-action btn-minimize" v-b-toggle.collapse1>
+                <h4><b-badge variant="primary" v-bind:id="data.item.perangkats_docs[0]._id" >Open ID <i class="icon-eye"></i></b-badge></h4>
+              </b-link>
+              <b-popover v-bind:target="data.item.perangkats_docs[0]._id" title="Device Id">
+                <!-- <strong>{{data.item._id}}</strong> -->
+                <h5>
+                  <b-badge variant="secondary">{{data.item.perangkats_docs[0]._id}}</b-badge>
+                </h5>
+              </b-popover>
+            </div>
+            <div slot="key-status" >
+              <h5>
+                <b-badge variant="secondary">Pending</b-badge>
+              </h5>
+            </div>
+            <div slot="key-tanggal" slot-scope="data">
+               <h5> <b-badge variant="secondary">{{data.item.perangkats_docs[0].data[0].tanggal | formatDate}}</b-badge></h5> 
+            </div>
+ 
+
           </b-table>
         </b-card>
       </b-col>
@@ -90,9 +111,17 @@ import PostsService from "@/services/PostsService";
 import Constants from "@/services/Constants";
 import 'vue-spinners/dist/vue-spinners.css';
 import { BounceSpinner } from 'vue-spinners/dist/vue-spinners.common';
+import moment from 'moment'
 
 export default {
   name: "Admin",
+    filters:{
+    formatDate : function(value){
+      if (value) {
+        return moment(String(value)).format('DD-MMM-YYYY HH:mm:ss')
+      }
+    }
+  },
   components: {
     Callout,
     BounceSpinner,
@@ -107,26 +136,33 @@ export default {
   data: function() {
     return {
       isLoading: true,
-      peternakRegistered: 0,
-      sapiRegistered: 0,
+      dokterRegistered: 0,
+      pasienRegistered: 0,
       deviceOnline: 0,
       deviceOffline: 0,
       devicePending: 0,
       selected: "Month",
       tableItems: [],
       tableFields: [
-        {
-          key:'key-nama',
+         {
+          key:'namaPasien',
           label: 'Name'
         },
-        {
-          key:'key-alamat',
+        { key: 'key-alamat', 
           label: 'Address'
         },
-        {
-          key:'key-telphone',
-          label: 'Telephone'
+        { key: 'key-telp', 
+          label: 'Phone'
         },
+        { key: 'key-id', 
+          label: 'Device Id' 
+        },
+        { key: 'key-status', 
+          label: 'Device Status'
+        },
+        { key: 'key-tanggal', 
+          label: 'Time' 
+        }
       ]
     };
   },
@@ -134,14 +170,21 @@ export default {
     this.checkSession();
   },
   methods: {
-    async fetchDataPeternak() {
-      let response = await PostsService.getAllPeternak(
+
+    async fetchDataPasien() {
+      let response = await PostsService.allPasien(
         window.localStorage.getItem("token")
       );
       return response.data;
     },
-    async fetchDataSapi() {
-      let response = await PostsService.getAllSapi(
+    async fetchDataPasienPending() {
+      let response = await PostsService.allPasienPending(
+        window.localStorage.getItem("token")
+      );
+      return response.data;
+    },
+    async fetchDataDokter() {
+      let response = await PostsService.allDokter(
         window.localStorage.getItem("token")
       );
       return response.data;
@@ -165,15 +208,19 @@ export default {
       var active = 0,
         nonactive = 0,
         pending = 0;
-      let response = await this.fetchDataPeternak();
-      let responseDataSapi = await this.fetchDataSapi();
-      let peternakData = response.data;
-      let sapiData = responseDataSapi.data;
+      let response = await this.fetchDataPasien();
+      let responseDataDokter = await this.fetchDataDokter();
+      let responseDataPasienPending = await this.fetchDataPasienPending()
+      let pasienData = response.data;
+      let dokterData = responseDataDokter.data;
+      let pasienDataPending = responseDataPasienPending.data
       this.isLoading=false
-      this.peternakRegistered = peternakData.length;
-      this.sapiRegistered = sapiData.length;
-      for (var i = 0; i < sapiData.length; i++) {
-        switch (sapiData[i].perangkat.status) {
+
+      this.dokterRegistered = dokterData.length;
+      this.pasienRegistered = pasienData.length;
+      console.log(pasienData)
+      for (var i = 0; i < pasienData.length; i++) {
+        switch (pasienData[i].perangkats_docs[0].statusDevice) {
           case Constants.DEVICE_ACTIVE:
             active++;
             break;
@@ -184,7 +231,7 @@ export default {
             pending++;
         }
       }
-      this.tableItems = peternakData;
+      this.tableItems = pasienDataPending;
       this.deviceOnline = active;
       this.deviceOffline = nonactive;
       this.devicePending = pending;
