@@ -14,7 +14,8 @@ const Attributes = () => import('@/views/admin/Attributes')
 const Dokter = () => import('@/views/admin/Dokter')
 const Training = () => import('@/views/admin/Training')
 const Solutions = () => import('@/views/admin/Solutions')
-const Pasien = () => import('@/views/admin/Pasien')
+const PasienAdmin = () => import('@/views/admin/Pasien')
+const Pasien = () => import('@/views/pasien/Pasien')
 
 const Colors = () => import('@/views/theme/Colors')
 const Typography = () => import('@/views/theme/Typography')
@@ -115,8 +116,8 @@ export default new Router({
         },
         {
           path: '/admin/pasien',
-          name : 'Pasien',
-          component: Pasien
+          name : 'PasienAdmin',
+          component: PasienAdmin
         },
         {
           path: '/admin/label',

@@ -123,6 +123,7 @@ export default {
                         });
      
       if(response.data.status){
+        
           let role = response.data.data.role
           if(role == Constants.ROLE_ADMIN){
             window.localStorage.setItem("token",response.data.data.token)
@@ -160,6 +161,7 @@ export default {
         window.localStorage.setItem("role",role)
         window.localStorage.setItem("id_pasien",response.data.data._id)
         this.isLoading=false
+        // console.log(response.data.data)
         this.$router.push({ name: 'Pasien' })
       // console.log(items);
     }

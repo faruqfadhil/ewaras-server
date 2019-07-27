@@ -53,7 +53,7 @@ import 'vue-spinners/dist/vue-spinners.css'
 import { BounceSpinner } from 'vue-spinners/dist/vue-spinners.common';
 
 export default {
-  name: "Pasien",
+  name: "PasienAdmin",
   components: {
     Callout,
     BounceSpinner,
